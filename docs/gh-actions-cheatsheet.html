@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>GitHub Actions Cheatsheet</title>
+  <style>
+    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;line-height:1.5;margin:28px;color:#111}
+    pre{background:#f6f8fa;padding:10px;border-radius:6px;overflow:auto}
+    h1,h2{color:#0b63a8}
+    ul{margin:0 0 12px 20px}
+    code{background:#eef;padding:2px 6px;border-radius:4px}
+    .small{font-size:0.9em;color:#333}
+  </style>
+</head>
+<body>
+  <h1>GitHub Actions — Quick Revision Cheatsheet</h1>
+
+  <h2>Workflows & Events</h2>
+  <ul>
+    <li>Workflow file: <code>.github/workflows/&lt;name&gt;.yml</code>.</li>
+    <li>Triggers (<code>on:</code>): <code>push</code>, <code>pull_request</code>, <code>workflow_dispatch</code>, <code>issues</code>.</li>
+  </ul>
+
+  <h2>Jobs & Steps</h2>
+  <ul>
+    <li>Job: <code>jobs.&lt;id&gt;</code>, runs on a runner (<code>runs-on</code>), use <code>needs</code> to depend.</li>
+    <li>Step: use <code>uses:</code> (action) or <code>run:</code> (shell).</li>
+  </ul>
+
+  <h2>Artifacts</h2>
+  <pre><code>- uses: actions/upload-artifact@v5
+  with:
+    name: build-artifact
+    path: dist
+
+- uses: actions/download-artifact@v5
+  with:
+    name: build-artifact
+    path: dist</code></pre>
+
+  <h2>Cache npm</h2>
+  <pre><code>- uses: actions/setup-node@v3
+  with:
+    node-version: 18
+    cache: 'npm'
+- run: npm ci</code></pre>
+
+  <h2>Run local tools</h2>
+  <pre><code>- run: npm exec vite -- build
+# or
+- run: npx vite build</code></pre>
+
+  <h2>Job outputs & env</h2>
+  <ul>
+    <li>Set output in a step: <code>echo "name=value" >> $GITHUB_OUTPUT</code>.</li>
+    <li>Expose job output: use <code>jobs.&lt;id&gt;.outputs</code> and read via <code>needs.&lt;id&gt;.outputs.&lt;name&gt;</code>.</li>
+    <li>Persist env: <code>echo "MY=val" >> $GITHUB_ENV</code>. Access in shell as <code>$MY</code>.</li>
+  </ul>
+
+  <hr>
+  <p class="small">Notes: print this page to PDF (File → Print) or use <code>pandoc</code> to convert the Markdown file in <code>docs/</code>.</p>
+</body>
+</html>
