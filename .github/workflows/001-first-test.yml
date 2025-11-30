@@ -7,11 +7,19 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: actions/cache@v4
+        id: npm-cache
         with:
-          path: ~/.npm
+          path: |
+            ~/.npm
+            ~/.npm/_cacache
           key: npm-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             npm-${{ runner.os }}-
+      - name: Show cache info
+        run: |
+          echo "cache-hit=${{ steps.npm-cache.outputs.cache-hit }}"
+          du -sh ~/.npm || true
+          ls -la ~/.npm/_cacache | head -n 20 || true
       - uses: actions/setup-node@v3
         with:
           node-version: 18
@@ -28,11 +36,19 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: actions/cache@v4
+        id: npm-cache
         with:
-          path: ~/.npm
+          path: |
+            ~/.npm
+            ~/.npm/_cacache
           key: npm-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             npm-${{ runner.os }}-
+      - name: Show cache info
+        run: |
+          echo "cache-hit=${{ steps.npm-cache.outputs.cache-hit }}"
+          du -sh ~/.npm || true
+          ls -la ~/.npm/_cacache | head -n 20 || true
       - uses: actions/setup-node@v3
         with:
           node-version: 18
@@ -49,11 +65,19 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: actions/cache@v4
+        id: npm-cache
         with:
-          path: ~/.npm
+          path: |
+            ~/.npm
+            ~/.npm/_cacache
           key: npm-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             npm-${{ runner.os }}-
+      - name: Show cache info
+        run: |
+          echo "cache-hit=${{ steps.npm-cache.outputs.cache-hit }}"
+          du -sh ~/.npm || true
+          ls -la ~/.npm/_cacache | head -n 20 || true
       - uses: actions/setup-node@v3
         with:
           node-version: 18
