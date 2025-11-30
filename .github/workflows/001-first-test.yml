@@ -39,18 +39,20 @@ jobs:
       - name: Building project
         run: npm run build
       - name: Arctifact upload
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v5
         with:
           name: build-artifact
+          path: dist
   deploy:
     runs-on: ubuntu-latestß
     needs: build
     steps:
       - uses: actions/checkout@v2
       - name: Download build artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v5
         with:
           name: build-artifact
+          path: dist
       - name: Run a one-line script
         run: echo Deploying application...
       - name: Print GitHub Context
