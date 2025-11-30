@@ -13,7 +13,8 @@ jobs:
         run: npm ci
       - name: Lint code
         run: |
-          echo "Linting code..."
+          echo "Linting code..." 
+          npm run lint
       - name: Run tests
         run: |
           echo "Running tests..."  

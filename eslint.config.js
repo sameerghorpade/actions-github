@@ -9,9 +9,9 @@ export default defineConfig([
     files: ["**/*.{js,jsx}"],
     plugins: { js, react: pluginReact, jest: pluginJest },
     extends: [
-      "js/recommended",
+      js.configs.recommended,
       pluginReact.configs.flat.recommended,
-      "plugin:jest/recommended"
+      pluginJest.configs["flat/recommended"]
     ],
     languageOptions: {
       globals: globals.browser
@@ -20,7 +20,8 @@ export default defineConfig([
       "react/react-in-jsx-scope": "off"
     },
     settings: {
-      react: { version: "detect" }
+      react: { version: "detect" },
+      jest: { version: "latest" }
     }
   }
 ]);
