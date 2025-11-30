@@ -36,13 +36,21 @@ jobs:
     needs: test
     steps:
       - uses: actions/checkout@v2
-      - name: Run a one-line script
-        run: echo Hello, world!
+      - name: Building project
+        run: npm run build
+      - name: Arctifact upload
+        uses: actions/upload-artifact@v2
+        with:
+          name: build-artifact
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latestß
     needs: build
     steps:
       - uses: actions/checkout@v2
+      - name: Download build artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: build-artifact
       - name: Run a one-line script
         run: echo Deploying application...
       - name: Print GitHub Context
