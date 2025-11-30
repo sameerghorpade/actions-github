@@ -133,3 +133,69 @@ pandoc docs/gh-actions-cheatsheet.md -o docs/gh-actions-cheatsheet.pdf
 
 ---
 Generated on: 30 Nov 2025
+
+# Environment Variables & Secrets
+- **Scopes:** workflow-level `env`, job-level `env`, step-level `env`, and `secrets` (store tokens/credentials).
+- **Set during run:** `echo "MY_VAR=hello" >> $GITHUB_ENV` (persists for later steps).
+- **Set step output:** `echo "result=ok" >> $GITHUB_OUTPUT` (for job outputs mapping).
+- **Accessing:** `${{ env.MY_VAR }}` or `${{ secrets.MY_SECRET }}` in expressions; `$MY_VAR` in shell steps.
+- **Best practices:** never echo secrets; prefer `secrets.` for credentials; limit scope to job/step when possible.
+
+# Controlling Workflow and Job Execution
+- **Triggers:** `on: push|pull_request|workflow_dispatch|schedule|issues`.
+- **Run only on paths:** `on: push: paths: [ 'src/**' ]` or `paths-ignore`.
+- **Manual runs:** `workflow_dispatch` with inputs for interactive triggers.
+- **Conditionals:** use `if:` on jobs or steps, e.g. `if: github.event_name == 'push'` or `if: ${{ success() }} && github.ref == 'refs/heads/main'`.
+- **Concurrency / cancel:**
+```yaml
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: true
+```
+- **Permissions & required reviewers:** use `permissions:` to set least privilege and branch protection checks where needed.
+
+# Jobs & Docker Containers
+- **Run a job inside a container:** use `container:` at job level to execute all steps inside that container.
+```yaml
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    container:
+      image: node:18
+    steps:
+      - run: node -v
+```
+- **Using services (databases):** `services:` provides linked containers (Redis, Postgres) available at `localhost`.
+```yaml
+services:
+  postgres:
+    image: postgres:13
+    env:
+      POSTGRES_PASSWORD: example
+    ports: ['5432:5432']
+```
+- **Docker options:** `options:` can set runtime flags (`--user`, volumes). Be mindful of filesystem ownership when persisting artifacts.
+
+# Building & Using Custom Actions
+- **Action types:** JavaScript action (Node), Docker action, Composite action (YAML combining steps).
+- **Action metadata:** `action.yml` (inputs, outputs, runs).
+  ```yaml
+  name: 'My Action'
+  inputs:
+    msg:
+      required: true
+  outputs:
+    result:
+  runs:
+    using: 'node12'
+    main: 'dist/index.js'
+  ```
+- **Using an action:**
+  - Local: `uses: ./path-to-action`
+  - Marketplace/versioned: `uses: owner/repo@v1`
+- **Publishing:** push a Git tag (v1) and reference `@v1` in workflows; follow marketplace publishing steps if needed.
+- **Composite actions:** useful for reusing step sequences without JavaScript — define `runs.using: 'composite'`.
+- **Best practices:** pin action versions (`@v1` or `@sha`), validate inputs, and avoid leaking secrets in `with:` unless necessary.
+
+---
+Updated: 30 Nov 2025

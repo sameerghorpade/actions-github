@@ -60,5 +60,48 @@
 
   <hr>
   <p class="small">Notes: print this page to PDF (File → Print) or use <code>pandoc</code> to convert the Markdown file in <code>docs/</code>.</p>
+  <h2>Environment Variables &amp; Secrets</h2>
+  <ul>
+    <li><strong>Scopes:</strong> workflow-level <code>env</code>, job-level <code>env</code>, step-level <code>env</code>, and <code>secrets</code> (tokens/credentials).</li>
+    <li><strong>Set during run:</strong> <code>echo "MY_VAR=hello" &gt;&gt; $GITHUB_ENV</code> (persists for later steps).</li>
+    <li><strong>Set step output:</strong> <code>echo "result=ok" &gt;&gt; $GITHUB_OUTPUT</code> (for job outputs).</li>
+    <li><strong>Access:</strong> <code>${{ env.MY_VAR }}</code> or <code>${{ secrets.MY_SECRET }}</code> in expressions; <code>$MY_VAR</code> in shell.</li>
+  </ul>
+
+  <h2>Controlling Workflow &amp; Job Execution</h2>
+  <ul>
+    <li>Triggers: <code>on: push|pull_request|workflow_dispatch|schedule|issues</code>.</li>
+    <li>Run on paths: use <code>paths</code> / <code>paths-ignore</code> under triggers.</li>
+    <li>Conditionals: use <code>if:</code> on jobs/steps, e.g. <code>if: github.event_name == 'push'</code>.</li>
+  </ul>
+  <pre><code>concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: true</code></pre>
+
+  <h2>Jobs &amp; Docker Containers</h2>
+  <pre><code>jobs:
+  test:
+    runs-on: ubuntu-latest
+    container:
+      image: node:18
+    steps:
+      - run: node -v</code></pre>
+  <p>Use <code>services:</code> for linked containers (databases) and <code>options:</code> for docker runtime flags.</p>
+
+  <h2>Building &amp; Using Custom Actions</h2>
+  <ul>
+    <li>Action types: JavaScript, Docker, Composite (YAML).</li>
+    <li>Action metadata is in <code>action.yml</code> (defines inputs/outputs and runs).</li>
+  </ul>
+  <pre><code>name: 'My Action'
+inputs:
+  msg:
+    required: true
+outputs:
+  result:
+runs:
+  using: 'node12'
+  main: 'dist/index.js'</code></pre>
+  <p>Use actions via <code>uses: owner/repo@v1</code> or local with <code>uses: ./path</code>. Pin versions and avoid leaking secrets.</p>
 </body>
 </html>
